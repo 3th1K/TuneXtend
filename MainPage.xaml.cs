@@ -19,10 +19,13 @@ namespace TuneXtend
             var spotifyToken = await _storageService.GetSpotifyTokenAsync();
             if (spotifyToken is null)
             {
-                var x = new UserLoginPopupPage("https://google.com");
-                await MopupService.Instance.PushAsync(x);
-                //Task.Run(async () => { await MopupService.Instance.PushAsync(x); }).Wait();
-                var rvalue = await x.PopupDismissedTask;
+                var popupPage = new UserLoginPopupPage("https://google.com");
+                await MopupService.Instance.PushAsync(popupPage);
+                var popupResult = await popupPage.PopupDismissedTask;
+                if (popupResult is null)
+                {
+
+                }
             }
             BtnCopySpotifyPlaylist.IsEnabled = true;
         }

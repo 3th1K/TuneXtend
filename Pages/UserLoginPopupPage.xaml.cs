@@ -19,9 +19,9 @@ public partial class UserLoginPopupPage
 
     private void LoginView_OnNavigated(object sender, WebNavigatedEventArgs e)
     {
-        if (e.Url.Contains("img"))
+        if (e.Url.Contains(SpotifyConstants.REDIRECT_URI))
         {
-            Result = "Ok its working";
+            Result = e.Url;
             MopupService.Instance.PopAsync();
         }
     }

@@ -14,8 +14,8 @@ namespace TuneXtend
         public const string TOKEN_URI = "https://accounts.spotify.com/api/token";
         public const string BASE_URI = "https://api.spotify.com/v1/";
 
-        public const string CLIENT_ID = "dc8f8cc260fa472b880517380d215459";
-        public const string CLIENT_SECRET = "df9230dc4f834c53b4e9125e1626249b";
+        public const string CLIENT_ID = "";
+        public const string CLIENT_SECRET = "";
         //public static readonly string STATE = Convert.ToBase64String(ConvertToSha256(GenerateRandomString(128)));
         public static readonly string CODE_VERIFIER = GenerateRandomString(128);
         public static readonly string CODE_CHALLANGE = Convert.ToBase64String(ConvertToSha256(CODE_VERIFIER));
