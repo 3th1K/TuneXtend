@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<mopup:PopupPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mopup="clr-namespace:Mopups.Pages;assembly=Mopups"
+             xmlns:pages="clr-namespace:TuneXtend.Pages"
+             x:Class="TuneXtend.Pages.UserLoginPopupPage"
+             Title="UserLoginPopupPage"
+             x:DataType="pages:UserLoginPopupPage">
+    <mopup:PopupPage.Background>
+        <LinearGradientBrush>
+            <GradientStop Color="LightSeaGreen"
+                          Offset="0.0" />
+            <GradientStop Color="DarkOliveGreen"
+                          Offset="1.0" />
+        </LinearGradientBrush>
+    </mopup:PopupPage.Background>
+    <VerticalStackLayout>
+        <WebView x:Name="loginView" 
+                 Source="{Binding Url}"
+                 Margin="20"
+                 Navigated="LoginView_OnNavigated"/>
+    </VerticalStackLayout>
+</mopup:PopupPage>
