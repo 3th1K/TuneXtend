@@ -5,15 +5,18 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height=".9*"/>
-            <RowDefinition Height=".1*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Frame>
+        <Frame Grid.Row="0">
             <WebView x:Name="abc" 
                      ></WebView>
         </Frame>
-        <Frame Grid.Row="1">
+        <Frame Grid.Row="0"
+               VerticalOptions="Center"
+               Padding="10, 10, 10, 10"
+               Margin="10">
             <Button x:Name="BtnCopySpotifyPlaylist"
+                    Text="Copy Playlist Within Spotify"
                     Clicked="BtnCopySpotifyPlaylist_OnClicked"/>
         </Frame>
     </Grid>

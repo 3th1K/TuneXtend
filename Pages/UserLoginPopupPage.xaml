@@ -8,16 +8,18 @@
              x:DataType="pages:UserLoginPopupPage">
     <mopup:PopupPage.Background>
         <LinearGradientBrush>
-            <GradientStop Color="LightSeaGreen"
+            <GradientStop Color="#80000000"
                           Offset="0.0" />
-            <GradientStop Color="DarkOliveGreen"
+            <GradientStop Color="Black"
                           Offset="1.0" />
         </LinearGradientBrush>
     </mopup:PopupPage.Background>
-    <VerticalStackLayout>
+    <Frame Margin="10"
+           Padding="0">
         <WebView x:Name="loginView" 
                  Source="{Binding Url}"
-                 Margin="20"
+                 HorizontalOptions="Fill"
+                 VerticalOptions="Fill"
                  Navigated="LoginView_OnNavigated"/>
-    </VerticalStackLayout>
+    </Frame>
 </mopup:PopupPage>

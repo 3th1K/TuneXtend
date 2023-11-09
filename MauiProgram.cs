@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Mopups.Hosting;
 using TuneXtend.Interfaces;
+using TuneXtend.Pages;
 using TuneXtend.Services;
 
 namespace TuneXtend
@@ -20,7 +21,10 @@ namespace TuneXtend
                 });
 
             builder.Services.AddSingleton<IStorageService, StorageService>();
+            builder.Services.AddSingleton<ISpotifyRestService, SpotifyRestService>();
+            builder.Services.AddSingleton<HttpClient>();
             builder.Services.AddSingleton<MainPage>();
+            builder.Services.AddSingleton<CopyPlaylistSpotify>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

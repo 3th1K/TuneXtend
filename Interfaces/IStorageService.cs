@@ -9,8 +9,12 @@ namespace TuneXtend.Interfaces
 {
     public interface IStorageService
     {
+        public Task<bool> SetCodeVerifierAsync(string codeVarifier);
+        public Task<string> GetCodeVerifierAsync();
         public Task<Token> GetSpotifyTokenAsync();
         public Task<bool> SetSpotifyTokenAsync(Token token);
+        public Task<bool> ValidateSpotifyTokenAsync(Token token);
+        public Task<string> GetSpotifyRefreshTokenAsync();
 
     }
 }
