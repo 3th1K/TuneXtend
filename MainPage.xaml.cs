@@ -38,7 +38,7 @@ namespace TuneXtend
                                      $"&code_challenge_method={SpotifyConstants.CODE_CHALLANGE_METHOD}" +
                                      $"&code_challenge={SpotifyConstants.CODE_CHALLANGE}" +
                                      $"&redirect_uri={WebUtility.UrlEncode(SpotifyConstants.REDIRECT_URI)}";
-                                     //$"&state={SpotifyConstants.SCOPE}";
+                //$"&state={SpotifyConstants.SCOPE}";
 
                 var popupPage = new UserLoginPopupPage(queryString);
                 await MopupService.Instance.PushAsync(popupPage);

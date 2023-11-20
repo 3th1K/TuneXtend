@@ -6,7 +6,9 @@
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
              x:Class="TuneXtend.Pages.CopyPlaylistSpotify"
              x:DataType="viewModels:CopyPlaylistSpotifyViewModel"
-             Shell.BackgroundColor="MediumSeaGreen">
+             Shell.BackgroundColor="MediumSeaGreen"
+             Shell.NavBarIsVisible="True"
+             Shell.NavBarHasShadow="True">
     <Shell.TitleView>
         <HorizontalStackLayout VerticalOptions="Fill">
             <Label
@@ -18,86 +20,130 @@
                 FontSize="Medium" />
         </HorizontalStackLayout>
     </Shell.TitleView>
-
+    <!--<ContentPage.Resources>
+        <Style TargetType="Border">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="Background"
+                                        Value="Black" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+    </ContentPage.Resources>-->
+    <ContentPage.Content>
     <RefreshView x:Name="PageRefreshView"
                  Refreshing="PageRefreshView_OnRefreshing">
         <ScrollView>
-        <StackLayout>
-            <StackLayout.Background>
-                <LinearGradientBrush StartPoint="0,0"
+            <StackLayout>
+                <StackLayout.Background>
+                    <LinearGradientBrush StartPoint="0,0"
                                      EndPoint="1,1">
-                    <GradientStop Color="MediumSeaGreen"
+                        <GradientStop Color="MediumSeaGreen"
                                   Offset="0.1"/>
-                    <GradientStop Color="#80000000"
+                        <GradientStop Color="#80000000"
                                   Offset="1.0"/>
                     </LinearGradientBrush>
                 </StackLayout.Background>
-            <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="8*"/>
-                <RowDefinition Height="2*"/>
-            </Grid.RowDefinitions>
-            <Frame Grid.Row="0"
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="8*"/>
+                        <RowDefinition Height="2*"/>
+                    </Grid.RowDefinitions>
+                    <Frame Grid.Row="0"
                    BackgroundColor="Transparent"
                    BorderColor="Transparent">
-                <VerticalStackLayout>
-                    <Frame>
                         <VerticalStackLayout>
-                            <Entry x:Name="SourceUrl"
+                            <Frame BackgroundColor="#80000000"
+                           BorderColor="AliceBlue">
+                                <VerticalStackLayout>
+                                    <Entry x:Name="SourceUrl"
                                    Placeholder="From"
-                                   Text="{Binding SourceUri}"></Entry>
-                        </VerticalStackLayout>
-                    </Frame>
-                    <Image Source="down_arrow.svg" 
+                                   PlaceholderColor="DarkGray"
+                                   Text="{Binding SourceUri}"
+                                   TextColor="White"></Entry>
+                                </VerticalStackLayout>
+                            </Frame>
+                            <Image Source="down_arrow.svg" 
                            Margin="10"
                            HeightRequest="50"/>
-                    <Label Text="Select or Create Playlist"
+                            <Label Text="Select or Create Playlist"
                            FontSize="20"
                            HorizontalOptions="Center"
                            Margin="0,0,0,10"></Label>
-                    <Frame Padding="5">
-                        <CollectionView x:Name="CollectionPlaylist" 
+                            <Frame Padding="5"
+                           BackgroundColor="Transparent"
+                           BorderColor="Transparent">
+                                <CollectionView x:Name="CollectionPlaylist" 
                                         ItemsSource="{Binding Playlists, Mode=TwoWay}"
                                         HeightRequest="200"
                                         ItemsLayout="HorizontalList"
                                         SelectionMode="Single"
                                         SelectedItem="{Binding SelectedPlaylist, Mode=TwoWay}"
                                         SelectionChanged="CollectionPlaylist_OnSelectionChanged">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="spotify:PlaylistItem">
-                                    <Grid Padding="10"
-                                          Margin="5,0,5,0">
-                                        <!--<Grid.GestureRecognizers>
-                                            <TapGestureRecognizer Tapped="OnPlaylistTapped"  
-                                                                  CommandParameter="{Binding id}"/>
-                                        </Grid.GestureRecognizers>-->
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="7*"/>
-                                            <RowDefinition Height="3*" />
-                                        </Grid.RowDefinitions>
-                                        <Image Grid.Row="0"
-                                               Source="{Binding images[0].url}"
-                                               Aspect="AspectFill"/>
-                                        <Button Grid.Row="0" 
-                                                x:Name="XButton"
-                                                Text="x"
-                                                FontSize="50"
-                                                BackgroundColor="Transparent"
-                                                IsVisible="{Binding collaborative, Mode=TwoWay}"
-                                                Clicked="XButton_OnClicked"/>
-                                        <Label Grid.Row="1"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="End"
-                                               Text="{Binding  name}"
-                                               FontAttributes="Bold" />
-                                    </Grid>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </Frame>
-                    <Frame Margin="40, 20, 40, 20">
-                        <VerticalStackLayout>
-                            <Button x:Name="BtnMain" 
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate x:DataType="spotify:PlaylistItem">
+                                            <Border Stroke="#C49B"
+                                    StrokeThickness="2"
+                                    BackgroundColor="Transparent"
+                                    HorizontalOptions="Center">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="10" />
+                                                </Border.StrokeShape>
+                                                <Border.Background>
+                                                    <LinearGradientBrush StartPoint="1,0"
+                                                                 EndPoint="0,1">
+                                                        <GradientStop Color="Gray"
+                                                              Offset="0.1"/>
+                                                        <GradientStop Color="Transparent"
+                                                              Offset="1.0"/>
+                                                    </LinearGradientBrush>
+                                                </Border.Background>
+                                                <Grid Padding="10"
+                                              Margin="5,0,5,0">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="7*"/>
+                                                        <RowDefinition Height="3*" />
+                                                    </Grid.RowDefinitions>
+
+
+                                                    <Image Grid.Row="0"
+                                                   Source="{Binding images[0].url}"
+                                                   HeightRequest="120"
+                                                   WidthRequest="120"
+                                                   Aspect="AspectFill"/>
+                                                    <Button Grid.Row="0" 
+                                                    x:Name="XButton"
+                                                    Text="x"
+                                                    FontSize="50"
+                                                    BackgroundColor="Transparent"
+                                                    IsVisible="{Binding collaborative, Mode=TwoWay}"
+                                                    Clicked="XButton_OnClicked"/>
+                                                    <Label Grid.Row="1"
+                                                   HorizontalOptions="Center"
+                                                   VerticalOptions="End"
+                                                   Text="{Binding  name}"
+                                                   TextColor="FloralWhite"
+                                                   FontAttributes="Bold"
+                                                   LineBreakMode="WordWrap"
+                                                   MaximumWidthRequest="120"
+                                                   VerticalTextAlignment="Center"
+                                                   HorizontalTextAlignment="Center"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </Frame>
+                            <Frame Margin="40, 20, 40, 20">
+                                <VerticalStackLayout>
+                                    <Button x:Name="BtnMain" 
                                     Text="{Binding BtnMainText}"
                                     FontSize="18"
                                     FontAttributes="Bold"
@@ -106,37 +152,38 @@
                                     BorderColor="Black"
                                     BorderWidth="2"
                                     Clicked="BtnMain_OnClicked">
-                            </Button>
+                                    </Button>
+                                </VerticalStackLayout>
+                            </Frame>
                         </VerticalStackLayout>
                     </Frame>
-                </VerticalStackLayout>
-            </Frame>
-            <Frame Grid.Row="1"
+                    <Frame Grid.Row="1"
                    BackgroundColor="Transparent"
                    BorderColor="Transparent">
-                <CollectionView ItemsSource="{Binding Logs}"
+                        <CollectionView ItemsSource="{Binding Logs}"
                                 ItemsLayout="VerticalList"
                                 HeightRequest="150">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="{x:Type system:String}">
-                            <Frame Padding="10"
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="{x:Type system:String}">
+                                    <Frame Padding="10"
                                    BackgroundColor="LightSeaGreen"
                                    BorderColor="LightSteelBlue">
-                                <VerticalStackLayout>
-                                    <Label Text="{Binding .}"
+                                        <VerticalStackLayout>
+                                            <Label Text="{Binding .}"
                                            VerticalOptions="Center"
                                            HorizontalOptions="Center"
                                            FontAttributes="Italic"></Label>
                                         </VerticalStackLayout>
-                            </Frame>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-                
-            </Frame>
-        </Grid>
-    </StackLayout>
+                                    </Frame>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                    </Frame>
+                </Grid>
+            </StackLayout>
         </ScrollView>
     </RefreshView>
+    </ContentPage.Content>
 
 </ContentPage>

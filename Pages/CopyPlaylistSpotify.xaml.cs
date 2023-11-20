@@ -21,14 +21,14 @@ public partial class CopyPlaylistSpotify : ContentPage
         InitializeComponent();
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
         PageRefreshView_OnRefreshing(new object(), EventArgs.Empty);
     }
 
 
-    private async void CollectionPlaylist_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+    private void CollectionPlaylist_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         PlaylistItem previousItem = e.PreviousSelection.Count > 0 ? (PlaylistItem)e.PreviousSelection[0] : null;
         var currentIndex = viewModel.Playlists.IndexOf(viewModel.SelectedPlaylist);
@@ -137,9 +137,9 @@ public partial class CopyPlaylistSpotify : ContentPage
     private async Task Refresh()
     {
         
-        viewModel.Logs = new ObservableCollection<string>();
+        //viewModel.Logs = new ObservableCollection<string>();
         var playlists = await _spotifyRestService.GetUserPlaylistsAsync();
-        if (playlists.Count != viewModel.Playlists.Count)
+        if (playlists.Count>0 && playlists.Count != viewModel.Playlists.Count)
         {
             foreach (var item in playlists)
             {

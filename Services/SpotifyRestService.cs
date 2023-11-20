@@ -237,7 +237,22 @@ namespace TuneXtend.Services
                 {
                     var userPlaylistData =
                         JsonSerializer.Deserialize<UserPlaylistsResponse>(responseStream);
-                    return userPlaylistData.items;
+                    List<PlaylistItem> playlistItems = new List<PlaylistItem>();
+                    foreach (var playlistItem in userPlaylistData.items)
+                    {
+                        if (playlistItem.images.Count<1)
+                        {
+                            playlistItem.images.Add(new ()
+                            {
+                                url = "https://i.scdn.co/image/ab67616d00001e02ff9ca10b55ce82ae553c8228",
+                                height = 300,
+                                width = 300
+                            });
+                        }
+                        playlistItems.Add(playlistItem);
+                    }
+
+                    return playlistItems;
                 }
             }
             catch (Exception ex)

@@ -32,7 +32,7 @@ public partial class UserLoginPopupPage
         _taskCompletionSource = new TaskCompletionSource<string>();
     }
 
-    protected override async void OnDisappearing()
+    protected override void OnDisappearing()
     {
         base.OnDisappearing();
         _taskCompletionSource.SetResult(Result);
