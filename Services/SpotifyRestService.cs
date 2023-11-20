@@ -4,6 +4,10 @@ using System.Web;
 using TuneXtend.Models.Spotify;
 using TuneXtend.Interfaces;
 using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using System.Text;
+using System;
 
 namespace TuneXtend.Services
 {
@@ -60,6 +64,187 @@ namespace TuneXtend.Services
                 //todo : handle exception
                 return null;
             }
+        }
+
+        public async Task<UserData> GetCurrentUserProfileAsync()
+        {
+            string uri = "https://api.spotify.com/v1/me";
+
+            var token = await _storageService.GetSpotifyTokenAsync();
+            _restClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token.access_token);
+            try
+            {
+                var response = await _restClient.GetAsync(uri);
+                var responseStream = await response.Content.ReadAsStreamAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    var userData =
+                        JsonSerializer.Deserialize<UserData>(responseStream);
+                    return userData;
+                }
+            }
+            catch (Exception ex)
+            {
+                // todo: handle get request exceptions
+            }
+            return null;
+        }
+
+        public async Task<PlaylistItem> GetPlaylistAsync(string playlistId)
+        {
+            string uri = $"{SpotifyConstants.BASE_URI}/playlists/{playlistId}";
+
+            var token = await _storageService.GetSpotifyTokenAsync();
+            _restClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token.access_token);
+            try
+            {
+                var response = await _restClient.GetAsync(uri);
+                var responseStream = await response.Content.ReadAsStreamAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    var userPlaylistData =
+                        JsonSerializer.Deserialize<PlaylistItem>(responseStream);
+                    return userPlaylistData;
+                }
+            }
+            catch (Exception ex)
+            {
+                // todo: handle get request exceptions
+            }
+            return null;
+        }
+
+        public async Task<PlaylistItem> CreatePlaylistAsync(string playlistName, string playlistDescription = "", bool isPublic = false, string userId = null)
+        {
+            if (userId is null)
+            {
+                var currentUserData = await GetCurrentUserProfileAsync();
+                userId = currentUserData.id;
+            }
+            string uri = $"{SpotifyConstants.BASE_URI}/users/{userId}/playlists";
+
+            var json = '{' +
+                       $"\"name\":\"{playlistName}\"," +
+                       $"\"description\":\"{playlistDescription}\"," +
+                       $"\"public\":\"{isPublic}\"" +
+                       '}';
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var token = await _storageService.GetSpotifyTokenAsync();
+            _restClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token.access_token);
+            try
+            {
+                var response = await _restClient.PostAsync(uri, content);
+                var responseStream = await response.Content.ReadAsStreamAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    var newPlaylist =
+                        JsonSerializer.Deserialize<PlaylistItem>(responseStream);
+                    return newPlaylist;
+                }
+            }
+            catch (Exception ex)
+            {
+                // todo: handle get request exceptions
+            }
+            return null;
+        }
+
+        public async Task<List<Track>> GetPlaylistTracksAsync(string playlistId)
+        {
+            string uri = $"{SpotifyConstants.BASE_URI}/playlists/{playlistId}/tracks";
+
+            var token = await _storageService.GetSpotifyTokenAsync();
+            _restClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token.access_token);
+
+            List<Track> tracks = new List<Track>();
+            var playlistData = new PlaylistData();
+            playlistData.next = uri;
+            try
+            {
+                while (playlistData.next is not null)
+                {
+                    var response = await _restClient.GetAsync(playlistData.next);
+                    var responseData = await response.Content.ReadAsStringAsync();
+                    playlistData.next = null;
+                    playlistData = JsonSerializer.Deserialize<PlaylistData>(responseData);
+                    var playlistItems = playlistData.items;
+                    foreach (var item in playlistItems)
+                    {
+                        var track = item.track;
+                        tracks.Add(track);
+                    }
+                }
+                return tracks;
+            }
+            catch (Exception ex)
+            {
+                // todo: handle get request exceptions
+            }
+            return null;
+        }
+
+        public async Task<string> AddTrackToPlaylist(string playlistId, string songId)
+        {
+            string uri = $"{SpotifyConstants.BASE_URI}/playlists/{playlistId}/tracks";
+            var json = '{' + "\"uris\":[" + $"\"spotify:track:{songId}\"]" + '}';
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var token = await _storageService.GetSpotifyTokenAsync();
+            _restClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token.access_token);
+            try
+            {
+                var response = await _restClient.PostAsync(uri, content);
+                var responseString = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    return responseString;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                // todo: handle get request exceptions
+            }
+            return null;
+        }
+
+        public async Task<List<PlaylistItem>> GetUserPlaylistsAsync(string userId = null)
+        {
+            string uri;
+            if (userId is null)
+            {
+                uri = $"{SpotifyConstants.BASE_URI}/me/playlists";
+            }
+            else
+            {
+                uri = $"{SpotifyConstants.BASE_URI}/users/{userId}/playlists";
+            }
+
+            var token = await _storageService.GetSpotifyTokenAsync();
+            _restClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", token.access_token);
+            try
+            {
+                var response = await _restClient.GetAsync(uri);
+                var responseStream = await response.Content.ReadAsStreamAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    var userPlaylistData =
+                        JsonSerializer.Deserialize<UserPlaylistsResponse>(responseStream);
+                    return userPlaylistData.items;
+                }
+            }
+            catch (Exception ex)
+            {
+                // todo: handle get request exceptions
+            }
+            return null;
         }
     }
 }

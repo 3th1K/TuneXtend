@@ -13,9 +13,9 @@ namespace TuneXtend
         public const string REDIRECT_URI = "https://localhost:8888/callback";
         public const string AUTH_URI = "https://accounts.spotify.com/authorize";
         public const string TOKEN_URI = "https://accounts.spotify.com/api/token";
-        public const string BASE_URI = "https://api.spotify.com/v1/";
+        public const string BASE_URI = "https://api.spotify.com/v1";
 
-        public const string CLIENT_ID = "";
+        public const string CLIENT_ID = "dc8f8cc260fa472b880517380d215459";
         public const string CLIENT_SECRET = "";
         public const string CODE_CHALLANGE_METHOD = "S256";
         public const string RESPONSE_TYPE = "code";
