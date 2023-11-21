@@ -122,7 +122,8 @@
                                                     x:Name="XButton"
                                                     Text="x"
                                                     FontSize="50"
-                                                    BackgroundColor="Transparent"
+                                                    BackgroundColor="#80000000"
+                                                    TextColor="Red"
                                                     IsVisible="{Binding collaborative, Mode=TwoWay}"
                                                     Clicked="XButton_OnClicked"/>
                                                     <Label Grid.Row="1"
@@ -141,20 +142,25 @@
                                     </CollectionView.ItemTemplate>
                                 </CollectionView>
                             </Frame>
-                            <Frame Margin="40, 20, 40, 20">
-                                <VerticalStackLayout>
-                                    <Button x:Name="BtnMain" 
+                                <Button x:Name="BtnMain"
                                     Text="{Binding BtnMainText}"
-                                    FontSize="18"
-                                    FontAttributes="Bold"
-                                    IsEnabled="True"
+                                    Clicked="BtnMain_OnClicked"
+                                    FontAttributes="Italic"
+                                    TextColor="Azure"
+                                    FontAutoScalingEnabled="True"
+                                    BorderColor="AliceBlue"
+                                    BorderWidth=".1"
+                                    Margin="20"
                                     BackgroundColor="MediumSeaGreen"
-                                    BorderColor="Black"
-                                    BorderWidth="2"
-                                    Clicked="BtnMain_OnClicked">
-                                    </Button>
-                                </VerticalStackLayout>
-                            </Frame>
+                                    CornerRadius="0"
+                                    FontSize="20">
+                                <Button.Shadow>
+                                    <Shadow Brush="Black"
+                                            Offset="-20,20"
+                                            Radius="40"
+                                            Opacity="0.3" />
+                                </Button.Shadow>
+                            </Button>
                         </VerticalStackLayout>
                     </Frame>
                     <Frame Grid.Row="1"
@@ -164,12 +170,12 @@
                                 ItemsLayout="VerticalList"
                                 HeightRequest="150">
                             <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="{x:Type system:String}">
+                                    <DataTemplate x:DataType="viewModels:LogObject">
                                     <Frame Padding="10"
-                                   BackgroundColor="LightSeaGreen"
-                                   BorderColor="LightSteelBlue">
+                                   BackgroundColor="{Binding LogColor}"
+                                   BorderColor="Transparent">
                                         <VerticalStackLayout>
-                                            <Label Text="{Binding .}"
+                                            <Label Text="{Binding LogString}"
                                            VerticalOptions="Center"
                                            HorizontalOptions="Center"
                                            FontAttributes="Italic"></Label>

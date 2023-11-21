@@ -1,8 +1,7 @@
 
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using Mopups.Interfaces;
 using TuneXtend.Interfaces;
 using TuneXtend.Models.Spotify;
 using TuneXtend.ViewModels;
@@ -12,10 +11,12 @@ namespace TuneXtend.Pages;
 public partial class CopyPlaylistSpotify : ContentPage
 {
     private readonly ISpotifyRestService _spotifyRestService;
+    private readonly IPopupNavigation _popupNavigation;
     public CopyPlaylistSpotifyViewModel viewModel;
-	public CopyPlaylistSpotify(ISpotifyRestService spotifyRestService)
+	public CopyPlaylistSpotify(ISpotifyRestService spotifyRestService, IPopupNavigation popupNavigation)
     {
         _spotifyRestService = spotifyRestService;
+        _popupNavigation = popupNavigation;
         viewModel = new CopyPlaylistSpotifyViewModel();
         BindingContext = viewModel;
         InitializeComponent();
@@ -53,11 +54,17 @@ public partial class CopyPlaylistSpotify : ContentPage
 
     private async Task CopyTracks(string sourcePlaylistId, string destinationPlaylistId)
     {
-        //string sourcePlaylistId = viewModel.SourcePlaylistId;
+        await _popupNavigation.PushAsync(new LoadingPopupPage());
         var sourceTracks = await _spotifyRestService.GetPlaylistTracksAsync(sourcePlaylistId);
-        //string destinationPlaylistId = viewModel.SelectedPlaylist.id;
         var destinationTracks = await _spotifyRestService.GetPlaylistTracksAsync(destinationPlaylistId);
-        viewModel.Logs.Add("Found " + sourceTracks.Count + " Tracks in the source Playlist");
+        await _popupNavigation.PopAsync();
+        viewModel.TotalLogCount = sourceTracks.Count;
+        viewModel.CompletedLogCount = 0;
+        viewModel.Logs.Add(new LogObject()
+        {
+            LogString = "Found " + sourceTracks.Count + " Tracks in the source Playlist",
+            LogColor = Colors.LightSeaGreen
+        });
         int success = 0;
         int failure = 0;
         int skipped = 0;
@@ -65,42 +72,60 @@ public partial class CopyPlaylistSpotify : ContentPage
         {
             if (destinationTracks.FirstOrDefault(t => t.id == track.id) is not null)
             {
-                viewModel.Logs.Add($"Skipping track [ {track.name} ] => Result : Skipped");
+                viewModel.Logs.Add( new LogObject()
+                    {
+                     LogString = $"Skipping track [ {track.name} ] => Result : Skipped",
+                     LogColor = Colors.DarkGrey
+                    });
                 skipped++;
+                viewModel.CompletedLogCount++;
             }
             else
             {
-                string l = $"Copying track [ {track.name} ] => Result : ";
+                var l = new LogObject();
+                l.LogString = $"Copying track [ {track.name} ] => Result : ";
                 try
                 {
                     var result = await _spotifyRestService.AddTrackToPlaylist(destinationPlaylistId, track.id);
                     if (result is not null)
                     {
-                        l+=("Success");
+                        l.LogString+=("Success");
+                        l.LogColor = Colors.Green;
                         success++;
+                        viewModel.CompletedLogCount++;
                     }
                     else
                     {
-                        l+=("Failure");
+                        l.LogString +=("Failure");
+                        l.LogColor = Colors.Red;
                         failure++;
+                        viewModel.CompletedLogCount++;
                     }
                 }
                 catch (Exception ex)
                 {
-                    l+=("Failure");
+                    l.LogString +=("Failure");
+                    l.LogColor = Colors.Red;
                     failure++;
+                    viewModel.CompletedLogCount++;
                 }
 
                 viewModel.Logs.Add(l);
             }
 
         }
-        viewModel.Logs.Add($"Copied {success} tracks, Failed : {failure}, Skipped : {skipped}");
+        viewModel.Logs.Add(new LogObject()
+        {
+            LogString = $"Copied {success} tracks, Failed : {failure}, Skipped : {skipped}",
+            LogColor = Colors.LightSeaGreen
+        });
+        viewModel.TotalLogCount = null;
+        viewModel.CompletedLogCount = null;
     }
 
     private async void BtnMain_OnClicked(object sender, EventArgs e)
     {
-        viewModel.Logs = new ObservableCollection<string>();
+        viewModel.Logs = new ObservableCollection<LogObject>();
         if (viewModel.SourcePlaylistId is null)
         {
             await DisplayAlert("Warning", "Please Provide a correct Playlist Url", "Ok");
@@ -137,9 +162,9 @@ public partial class CopyPlaylistSpotify : ContentPage
     private async Task Refresh()
     {
         
-        //viewModel.Logs = new ObservableCollection<string>();
+        viewModel.Logs = new ObservableCollection<LogObject>();
         var playlists = await _spotifyRestService.GetUserPlaylistsAsync();
-        if (playlists.Count>0 && playlists.Count != viewModel.Playlists.Count)
+        if (playlists.Count != viewModel.Playlists.Count)
         {
             foreach (var item in playlists)
             {

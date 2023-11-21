@@ -6,14 +6,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using TuneXtend.Models.Spotify;
 
 namespace TuneXtend.ViewModels
 {
+    public class LogObject
+    {
+        public string LogString { get; set; }
+        public Color LogColor { get; set; }
+    }
 
     public partial class CopyPlaylistSpotifyViewModel : ObservableObject
     {
-
         [ObservableProperty] private string sourcePlaylistId = null;
 
         private string sourceUri;
@@ -37,7 +42,30 @@ namespace TuneXtend.ViewModels
         }
 
         [ObservableProperty] private ObservableCollection<PlaylistItem> playlists = new();
-        [ObservableProperty] private ObservableCollection<string> logs = new();
+        [ObservableProperty] private ObservableCollection<LogObject> logs = new();
+
+
+        
+
+        [ObservableProperty] private int? totalLogCount = null;
+        private int? completedLogCount = null;
+
+        public int? CompletedLogCount
+        {
+            get => completedLogCount;
+            set
+            {
+                SetProperty(ref completedLogCount, value);
+                if (value is not null && value < TotalLogCount)
+                {
+                    BtnMainText = $"Copy in progress : {value} / {TotalLogCount}";
+                }
+                else if (value is null)
+                {
+                    BtnMainText = $"Copy Done";
+                }
+            }
+        }
         private PlaylistItem selectedPlaylist = null;
         public PlaylistItem SelectedPlaylist
         {
