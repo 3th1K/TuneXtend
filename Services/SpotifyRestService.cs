@@ -229,31 +229,36 @@ namespace TuneXtend.Services
             var token = await _storageService.GetSpotifyTokenAsync();
             _restClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token.access_token);
+            List<PlaylistItem> playlistItems = new List<PlaylistItem>();
+            var userPlaylistResponse = new UserPlaylistsResponse();
+            userPlaylistResponse.next = uri;
             try
             {
-                var response = await _restClient.GetAsync(uri);
-                var responseStream = await response.Content.ReadAsStreamAsync();
-                if (response.IsSuccessStatusCode)
+                while (userPlaylistResponse.next is not null)
                 {
-                    var userPlaylistData =
-                        JsonSerializer.Deserialize<UserPlaylistsResponse>(responseStream);
-                    List<PlaylistItem> playlistItems = new List<PlaylistItem>();
-                    foreach (var playlistItem in userPlaylistData.items)
+                    var response = await _restClient.GetAsync(userPlaylistResponse.next);
+                    var responseStream = await response.Content.ReadAsStreamAsync();
+                    userPlaylistResponse.next = null;
+                    if (response.IsSuccessStatusCode)
                     {
-                        if (playlistItem.images.Count<1)
+                        userPlaylistResponse = JsonSerializer.Deserialize<UserPlaylistsResponse>(responseStream);
+                        foreach (var playlistItem in userPlaylistResponse.items)
                         {
-                            playlistItem.images.Add(new ()
+                            if (playlistItem.images.Count < 1)
                             {
-                                url = "https://i.scdn.co/image/ab67616d00001e02ff9ca10b55ce82ae553c8228",
-                                height = 300,
-                                width = 300
-                            });
+                                playlistItem.images.Add(new()
+                                {
+                                    url = "https://i.scdn.co/image/ab67616d00001e02ff9ca10b55ce82ae553c8228",
+                                    height = 300,
+                                    width = 300
+                                });
+                            }
+                            playlistItems.Add(playlistItem);
                         }
-                        playlistItems.Add(playlistItem);
                     }
-
-                    return playlistItems;
                 }
+                return playlistItems;
+
             }
             catch (Exception ex)
             {

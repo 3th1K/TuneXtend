@@ -22,10 +22,12 @@ public partial class CopyPlaylistSpotify : ContentPage
         InitializeComponent();
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
+        await _popupNavigation.PushAsync(new LoadingPopupPage("Fetching Playlists"));
         PageRefreshView_OnRefreshing(new object(), EventArgs.Empty);
+        await _popupNavigation.PopAsync();
     }
 
 
@@ -54,7 +56,7 @@ public partial class CopyPlaylistSpotify : ContentPage
 
     private async Task CopyTracks(string sourcePlaylistId, string destinationPlaylistId)
     {
-        await _popupNavigation.PushAsync(new LoadingPopupPage());
+        await _popupNavigation.PushAsync(new LoadingPopupPage("Fetching Songs"));
         var sourceTracks = await _spotifyRestService.GetPlaylistTracksAsync(sourcePlaylistId);
         var destinationTracks = await _spotifyRestService.GetPlaylistTracksAsync(destinationPlaylistId);
         await _popupNavigation.PopAsync();
@@ -142,15 +144,15 @@ public partial class CopyPlaylistSpotify : ContentPage
         else
         {
             string playlistName = await DisplayPromptAsync("Create Playlist",
-                "Input new playlist name",
+                "New Playlist",
                 "Create",
                 "Cancel",
-                new Guid().ToString(),
-                10);
+                "Enter new playlist name",
+                30);
             if (playlistName is not null)
             {
                 var newPlaylist = await _spotifyRestService.CreatePlaylistAsync(playlistName);
-                await DisplayAlert("new playlist created", $"{JsonSerializer.Serialize(newPlaylist)}", "ok");
+                //await DisplayAlert("new playlist created", $"{JsonSerializer.Serialize(newPlaylist)}", "ok");
                 string sourcePlaylistId = viewModel.SourcePlaylistId;
                 string destinationPlaylistId = newPlaylist.id;
                 await CopyTracks(sourcePlaylistId, destinationPlaylistId);
