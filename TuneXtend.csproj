@@ -33,6 +33,7 @@
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+    <!--<MauiIcon Include="Resources\AppIcon\audio.png"  />-->
 
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
@@ -60,7 +61,7 @@
 
 	<ItemGroup>
 	  <MauiXaml Update="Pages\CopyPlaylistSpotify.xaml">
-	    <Generator>MSBuild:Compile</Generator>
+      <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\LoadingPopupPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
